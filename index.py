@@ -7,6 +7,7 @@ import dash_bootstrap_components as dbc
 import time
 import threading
 from datetime import datetime
+import xlsxwriter
 import openpyxl
 import pandas as pd
 import numpy as np
