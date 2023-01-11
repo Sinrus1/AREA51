@@ -1,4 +1,4 @@
-# Import necessary libraries 
+# Import necessary libraries
 import dash
 from dash import dash, html, Input, Output, ctx, dcc, State
 from dash.dependencies import Input, Output
@@ -27,8 +27,8 @@ from components import navbar
 nav = navbar.Navbar()
 
 # import name and data files
-dt = pd.read_excel(r'Data.xlsx')
-df = pd.read_excel(r'Agents.xlsx')
+dt = pd.read_excel(r'/home/densadam/AREA51/Data.xlsx')
+df = pd.read_excel(r'/home/densadam/AREA51/Agents.xlsx')
 
 #Assigns value of total tickets worked
 mbm_total_output = dt.at[0, 'Total_MBM_Cases']
@@ -46,7 +46,7 @@ def timestamp():
     timestamp = datetime.fromtimestamp(timestamp_num)
     return timestamp
 
-    
+
 
 
 # Sets up today's date and yesterdays data
@@ -64,9 +64,9 @@ if int(today) != yesterday:
     print('Different day, tickets worked was reset.')
     df['MBM_Worked'] = 0
     df['UET_Worked'] = 0
-    
-    df.to_excel('Agents.xlsx', index = False)
-    dt.to_excel('Data.xlsx', index = False)
+
+    df.to_excel('/home/densadam/AREA51/Agents.xlsx', index = False)
+    dt.to_excel('/home/densadam/AREA51/Data.xlsx', index = False)
 
 else:
     pass
@@ -82,8 +82,8 @@ app.layout = html.Div([
 
     # Core Homepage
     dcc.Location(id='url', refresh=True),
-    nav, 
-    html.Div(id='page-content', children=[]), 
+    nav,
+    html.Div(id='page-content', children=[]),
 ])
 
 @app.callback(Output('page-content', 'children'),
@@ -114,9 +114,9 @@ def display_page(pathname):
 )
 
 def update_add_remove_agent(n_clicks, value):
-    
-    df = pd.read_excel(r'Agents.xlsx')
-    
+
+    df = pd.read_excel(r'/home/densadam/AREA51/Agents.xlsx')
+
     #checks if value is blank
     if value.isalpha() == False:
         msg = 'No spaces, numbers or special characters are allowed'
@@ -127,12 +127,12 @@ def update_add_remove_agent(n_clicks, value):
             selected_name = value_name.upper()
 
             # Creates seperate list to compare if duplicates exist.
-            df = pd.read_excel(r'Agents.xlsx')                            ######### Needs URL updated
+            df = pd.read_excel(r'/home/densadam/AREA51/Agents.xlsx')                            ######### Needs URL updated
             dup_check = True
             name_list = df['Name']
             name_list.loc[len(name_list)] = selected_name
-        
-            #If duplicates exist on seperate list, error message generated. Else, add name to main list.     
+
+            #If duplicates exist on seperate list, error message generated. Else, add name to main list.
             if len(name_list) != len(set(name_list)):
                 msg = 'Duplicate name, please enter a different name!'
                 dup_check = True
@@ -141,42 +141,42 @@ def update_add_remove_agent(n_clicks, value):
                 dup_check = False
 
 
-            #Checks if duplicates status is false, then adds name to DF and DT dataframes.    
+            #Checks if duplicates status is false, then adds name to DF and DT dataframes.
             if dup_check == False:
                 add_name = [selected_name, 0, 0, 0, 0, False]
                 df.loc[len(df)] = add_name
-        
-                writer = pd.ExcelWriter('/home/densadam/AREA51/Agent_Data/'+selected_name+'.xlsx', engine='xlsxwriter')   ########Need to change directory
-                with pd.ExcelWriter('/home/densadam/AREA51/Agent_Data/'+selected_name+'.xlsx') as writer:                   ########Need to change directory
+
+                writer = pd.ExcelWriter('/home/densadam/AREA51/'+selected_name+'.xlsx', engine='xlsxwriter')   ########Need to change directory
+                with pd.ExcelWriter('/home/densadam/AREA51/'+selected_name+'.xlsx') as writer:                   ########Need to change directory
 
                     dict = {selected_name+'_MBM_Worked': [timestamp], "Action": ['Agent Created']}
                     da_m = pd.DataFrame(dict)
                     dict = {selected_name+'_UET_Worked': [timestamp], "Action": ['Agent Created']}
                     da_u = pd.DataFrame(dict)
-                        
+
                     da_m.to_excel(writer, sheet_name=selected_name+'_MBM_Worked', index=False)
                     da_u.to_excel(writer, sheet_name=selected_name+'_UET_Worked', index=False)
 
                 df['Name'] = df['Name'].str.upper()
                 name_list = df['Name']
-                first_name_list = df.loc[0, 'Name']
-
-                df.to_excel('Agents.xlsx', index = False)                      ########Need to change directory
 
 
+                df.to_excel('/home/densadam/AREA51/Agents.xlsx', index = False)                      ########Need to change directory
 
 
-                
+
+
+
         else:
             pass
 
     return html.Div(msg)
-    
+
 
 
 
 ######################
-#### Remove Agent ####                                                         
+#### Remove Agent ####
 ######################
 
 
@@ -191,13 +191,13 @@ def update_output(value, n_clicks):
     msg1 = 'Select name of the agent who you want to remove from the list of agents'
 
     if "btn-nclicks-1" == ctx.triggered_id:
-        
-        df = pd.read_excel(r'Agents.xlsx')     # Directory needs to be updated
+
+        df = pd.read_excel(r'/home/densadam/AREA51/Agents.xlsx')     # Directory needs to be updated
 
         msg1 = 'You have removed {} from the list of agents'.format(value_name)
         df = df[df["Name"].str.contains(value_name) == False]
 
-        df.to_excel('Agents.xlsx', index = False)  # Directory needs to be updated
+        df.to_excel('/home/densadam/AREA51/Agents.xlsx', index = False)  # Directory needs to be updated
 
 
     else:
@@ -214,14 +214,14 @@ def update_output(value, n_clicks):
 @app.callback(
     Output('mdd-output-container', 'children'),
     Input('work-list', 'value'),
-    prevent_initial_call=False    
+    prevent_initial_call=False
     )
 
 def update_working(value1):
 
-    df = pd.read_excel(r'Agents.xlsx')  # Directory needs to be updated
-    dt = pd.read_excel(r'Data.xlsx')
-    
+    df = pd.read_excel(r'/home/densadam/AREA51/Agents.xlsx')  # Directory needs to be updated
+    dt = pd.read_excel(r'/home/densadam/AREA51/Data.xlsx')
+
     # Sets up today's date and yesterdays data
     now = datetime.now()
     timestamp_num = datetime.timestamp(now)
@@ -231,16 +231,16 @@ def update_working(value1):
     today = day
     yesterday = dt.loc[0,'Date']
     dt.loc[0, 'Date'] = today
-    timestamp_now = pd.to_datetime('today').strftime("%Y-%m-%d %H:%M:%S")
+
 
 
     # checks if time is different day, if true, resets tickets worked to zero
     if int(today) != yesterday:
-        
+
         df['MBM_Worked'] = 0
         df['UET_Worked'] = 0
-        df.to_excel('Agents.xlsx', index = False) # Directory needs to be updated
-        dt.to_excel('Data.xlsx', index = False) # Directory needs to be updated
+        df.to_excel('/home/densadam/AREA51/Agents.xlsx', index = False) # Directory needs to be updated
+        dt.to_excel('/home/densadam/AREA51/Data.xlsx', index = False) # Directory needs to be updated
     else:
         pass
 
@@ -251,22 +251,22 @@ def update_working(value1):
     if not value1:
         df['Working'] = False
         msg2 = "There aren't any agents selected, please select an Agent first!"
-        
+
     else:
-        df = pd.read_excel(r'Agents.xlsx')  # Directory needs to be updated
-        # Updates selected agent values and updates working list. 
+        df = pd.read_excel(r'/home/densadam/AREA51/Agents.xlsx')  # Directory needs to be updated
+        # Updates selected agent values and updates working list.
         list_value = value1
         df_value1 = pd.Series(list_value)
         working_value = df['Name'].isin(df_value1)
         df['Working'] = working_value
-        invalid_workers = False
+
         msg2 = 'Agents working today has been updated'
-    
-        df.to_excel('Agents.xlsx', index = False) # Directory needs to be updated
-   
-    
+
+        df.to_excel('/home/densadam/AREA51/Agents.xlsx', index = False) # Directory needs to be updated
+
+
     return  msg2
-    
+
 
 
 ###########################################
@@ -286,33 +286,33 @@ def update_working(value1):
     Input('ambm-btn', 'n_clicks'),
     Input('mmbm-btn', 'n_clicks'),
     Input('mbm_dropdown', component_property='options'),
-    State("mbm_dropdown", "value"),  
+    State("mbm_dropdown", "value"),
     prevent_initial_call=False
 )
 
-#Manual assign MBM ticket and setups button call for Automatic assign MBM case 
+#Manual assign MBM ticket and setups button call for Automatic assign MBM case
 def update_mbm(button1, button2, options, value):
 
-    dt = pd.read_excel(r'Data.xlsx')
-    df = pd.read_excel(r'Agents.xlsx')
+    dt = pd.read_excel(r'/home/densadam/AREA51/Data.xlsx')
+    df = pd.read_excel(r'/home/densadam/AREA51/Agents.xlsx')
 
     #Assigns value of total tickets worked
     mbm_total_output = dt.at[0, 'Total_MBM_Cases']
     message1 = "Either manually or automatically assign agent a ticket"
-    assignee = value 
+    assignee = value
 
     #Gets sum of total tickets worked for the day
     mbm_day_output = df['MBM_Worked'].sum()
 
     #Waits for button click to be triggered
     triggered_id = ctx.triggered_id
-    
+
     if triggered_id == 'mmbm-btn':
-         
+
         #Reads/creates dataframes from Excel files
-        df = pd.read_excel(r'Agents.xlsx')
-        dt = pd.read_excel(r'Data.xlsx')
-        
+        df = pd.read_excel(r'/home/densadam/AREA51/Agents.xlsx')
+        dt = pd.read_excel(r'/home/densadam/AREA51/Data.xlsx')
+
         #Gets agent name from dropdown and finds index value
         selected_name = value                                                      # df['Name'].str.capitalize() )
         mbm_selected_index = df[df['Name']==selected_name].index.values
@@ -330,15 +330,15 @@ def update_mbm(button1, button2, options, value):
 
         #Checks if agent is working today value is False
         if working_true == False:
-            
+
             message1 = "Are you sure you selected the right agent? This agent isn't set to work today!"
 
             return message1, mbm_total_output, assignee, mbm_day_output
-    
+
         else:
             #Adds +1 ticket worked to selected agent
             df.at[int(mbm_selected_index), 'MBM_Worked'] += 1
-            
+
             #Add +1 to selection count value to all agents
             df['MBM_Selected'] += 1
 
@@ -348,9 +348,9 @@ def update_mbm(button1, button2, options, value):
             #Add +1 to total worked tickets
             dt['Total_MBM_Cases'] += 1
 
-            #Reads personal agent Excel files            
-            da_m = pd.read_excel('/home/densadam/AREA51/Agent_Data/'+selected_name+'.xlsx', sheet_name=selected_name+'_MBM_Worked') ####*******Will need to redefine directory
-            da_u = pd.read_excel('/home/densadam/AREA51/Agent_Data/'+selected_name+'.xlsx', sheet_name=selected_name+'_UET_Worked')  ####*******Will need to redefine directory
+            #Reads personal agent Excel files
+            da_m = pd.read_excel('/home/densadam/AREA51/'+selected_name+'.xlsx', sheet_name=selected_name+'_MBM_Worked') ####*******Will need to redefine directory
+            da_u = pd.read_excel('/home/densadam/AREA51/'+selected_name+'.xlsx', sheet_name=selected_name+'_UET_Worked')  ####*******Will need to redefine directory
 
 
             #Makes copy of agent data and adds new data
@@ -359,30 +359,30 @@ def update_mbm(button1, button2, options, value):
             da_m = pd.concat([da_m1, da_m2])
 
             #writes data to excel file
-            writer = pd.ExcelWriter('/home/densadam/AREA51/Agent_Data/'+selected_name+'.xlsx', engine='xlsxwriter')  ####*******Will need to redefine directory
-            with pd.ExcelWriter('/home/densadam/AREA51/Agent_Data/'+selected_name+'.xlsx') as writer:
+            writer = pd.ExcelWriter('/home/densadam/AREA51/'+selected_name+'.xlsx', engine='xlsxwriter')  ####*******Will need to redefine directory
+            with pd.ExcelWriter('/home/densadam/AREA51/'+selected_name+'.xlsx') as writer:
                 da_m.to_excel(writer, sheet_name=selected_name+'_MBM_Worked', index=False)
                 da_u.to_excel(writer, sheet_name=selected_name+'_UET_Worked', index=False)
-            
+
             #Assigns value of total tickets worked
             mbm_total_output = dt.at[0, 'Total_MBM_Cases']
-            
+
             #Gets sum of total tickets worked for the day
             mbm_day_output = df['MBM_Worked'].sum()
 
             #Returns message of changes made
-            message1 = '{} was manually assigned the next MBM Case'.format(selected_name, mbm_total_output)
+            message1 = '{} was manually assigned the next MBM Case'.format(selected_name)
             assignee = selected_name
 
             #Writes data to Excel files
-            df.to_excel('Agents.xlsx', index = False)
-            dt.to_excel('Data.xlsx', index = False)
+            df.to_excel('/home/densadam/AREA51/Agents.xlsx', index = False)
+            dt.to_excel('/home/densadam/AREA51/Data.xlsx', index = False)
 
             return message1, mbm_total_output, assignee, mbm_day_output
-        
 
 
-        
+
+
     #calls on auto_mbm assign button function if pressed
     elif triggered_id == 'ambm-btn':
          return Auto_MBM()
@@ -394,17 +394,17 @@ def update_mbm(button1, button2, options, value):
 #And all other agents gain +1 to selection value.
 def Auto_MBM():
 
-    df = pd.read_excel(r'Agents.xlsx')            # Directory needs to be updated
+    df = pd.read_excel(r'/home/densadam/AREA51/Agents.xlsx')            # Directory needs to be updated
 
     #Checks if any agents are working
     if df['Working'].values.sum() == 0:
-        
+
         #imports files from Excel files
-        df = pd.read_excel(r'Agents.xlsx')            # Directory needs to be updated
-        dt = pd.read_excel(r'Data.xlsx')              # Directory needs to be updated
-            
+        df = pd.read_excel(r'/home/densadam/AREA51/Agents.xlsx')            # Directory needs to be updated
+        dt = pd.read_excel(r'/home/densadam/AREA51/Data.xlsx')              # Directory needs to be updated
+
         message1 = 'No agents selected to work today!'
-        
+
         #Finds agent with lowest selection count (last agent picked)
         min_work_index = df['MBM_Selected'].idxmin()
         min_agent_name_uet = df.at[min_work_index, 'Name']
@@ -417,29 +417,29 @@ def Auto_MBM():
         mbm_total_output = dt.at[0, 'Total_MBM_Cases']
 
         #Saves changes to Excel files
-        df.to_excel('Agents.xlsx', index = False)              # Directory needs to be updated
-        dt.to_excel('Data.xlsx', index = False)              # Directory needs to be updated
-        
+        df.to_excel('/home/densadam/AREA51/Agents.xlsx', index = False)              # Directory needs to be updated
+        dt.to_excel('/home/densadam/AREA51/Data.xlsx', index = False)              # Directory needs to be updated
+
         return message1, mbm_total_output, assignee, mbm_day_output
-        
+
     else:
 
         #imports files from Excel files
-        df = pd.read_excel(r'Agents.xlsx')            # Directory needs to be updated
-        dt = pd.read_excel(r'Data.xlsx')              # Directory needs to be updated
+        df = pd.read_excel(r'/home/densadam/AREA51/Agents.xlsx')            # Directory needs to be updated
+        dt = pd.read_excel(r'/home/densadam/AREA51/Data.xlsx')              # Directory needs to be updated
 
         #Creates list of agents who are working today
         work_list = df[df['Working'] == True]
-        
+
         #Creates Data Frame of agents who are working today, then finds the agent with highest slection count value
         df2 = pd.DataFrame(work_list)
         max_work_index = df2['MBM_Selected'].idxmax()
         max_agent_name_mbm = df.at[max_work_index, 'Name']
-        max_agent_name_column_mbm = max_agent_name_mbm + '_MBM_Cases_Worked'
-        
+
+
         #Reads and creates Data Frame of personal agent Excel file
-        da_m = pd.read_excel('/home/densadam/AREA51/Agent_Data/'+max_agent_name_mbm+'.xlsx', sheet_name=max_agent_name_mbm+'_MBM_Worked')  ####*******Will need to redefine directory
-        da_u = pd.read_excel('/home/densadam/AREA51/Agent_Data/'+max_agent_name_mbm+'.xlsx', sheet_name=max_agent_name_mbm+'_UET_Worked') ####*******Will need to redefine directory
+        da_m = pd.read_excel('/home/densadam/AREA51/'+max_agent_name_mbm+'.xlsx', sheet_name=max_agent_name_mbm+'_MBM_Worked')  ####*******Will need to redefine directory
+        da_u = pd.read_excel('/home/densadam/AREA51/'+max_agent_name_mbm+'.xlsx', sheet_name=max_agent_name_mbm+'_UET_Worked') ####*******Will need to redefine directory
 
 
         #Adds +1 count to all agent's selection count value
@@ -452,7 +452,7 @@ def Auto_MBM():
         assignee = df.at[max_work_index, 'Name']
         message1 = "{} was automatically assigned the next MBM case".format(assignee)
 
-        
+
         #Resets value of highest selection count agent to 0
         df.at[max_work_index, 'MBM_Selected'] = 0
 
@@ -461,7 +461,7 @@ def Auto_MBM():
 
         #Gets sum of total tickets worked for the day
         mbm_day_output = df['MBM_Worked'].sum()
-        
+
         #Assigns value of total tickets worked
         mbm_total_output = dt.at[0, 'Total_MBM_Cases']
 
@@ -471,14 +471,14 @@ def Auto_MBM():
         da_m = pd.concat([da_m1, da_m2])
 
         #writes data to agent's personal excel file
-        writer = pd.ExcelWriter('/home/densadam/AREA51/Agent_Data/'+max_agent_name_mbm+'.xlsx', engine='xlsxwriter')  ####*******Will need to redefine directory
-        with pd.ExcelWriter('/home/densadam/AREA51/Agent_Data/'+max_agent_name_mbm+'.xlsx') as writer:
+        writer = pd.ExcelWriter('/home/densadam/AREA51/'+max_agent_name_mbm+'.xlsx', engine='xlsxwriter')  ####*******Will need to redefine directory
+        with pd.ExcelWriter('/home/densadam/AREA51/'+max_agent_name_mbm+'.xlsx') as writer:
             da_m.to_excel(writer, sheet_name=max_agent_name_mbm+'_MBM_Worked', index=False)
             da_u.to_excel(writer, sheet_name=max_agent_name_mbm+'_UET_Worked', index=False)
 
         #Saves changes to Excel files
-        df.to_excel('Agents.xlsx', index = False)              # Directory needs to be updated
-        dt.to_excel('Data.xlsx', index = False)              # Directory needs to be updated
+        df.to_excel('/home/densadam/AREA51/Agents.xlsx', index = False)              # Directory needs to be updated
+        dt.to_excel('/home/densadam/AREA51/Data.xlsx', index = False)              # Directory needs to be updated
 
 
         return message1, mbm_total_output, assignee, mbm_day_output
@@ -500,20 +500,20 @@ def Auto_MBM():
     Input('auet-btn', 'n_clicks'),
     Input('muet-btn', 'n_clicks'),
     Input('uet_dropdown', component_property='options'),
-    State("uet_dropdown", "value"),  
+    State("uet_dropdown", "value"),
     prevent_initial_call=False
 )
 
-#Manual assign UET ticket and setups button call for Automatic assign UET ticket 
+#Manual assign UET ticket and setups button call for Automatic assign UET ticket
 def update_uet(button1, button2, options, value):
 
-    dt = pd.read_excel(r'Data.xlsx')
-    df = pd.read_excel(r'Agents.xlsx')
+    dt = pd.read_excel(r'/home/densadam/AREA51/Data.xlsx')
+    df = pd.read_excel(r'/home/densadam/AREA51/Agents.xlsx')
 
     #Assigns value of total tickets worked
     uet_total_output = dt.at[0, 'Total_UET_Tickets']
     message1 = "Either manually or automatically assign agent a ticket"
-    assignee = value 
+    assignee = value
 
     #Gets sum of total tickets worked for the day
     uet_day_output = df['UET_Worked'].sum()
@@ -522,10 +522,10 @@ def update_uet(button1, button2, options, value):
     triggered_id = ctx.triggered_id
 
     if triggered_id == 'muet-btn':
-         
+
         #Reads/creates dataframes from Excel files
-        df = pd.read_excel(r'Agents.xlsx')
-        dt = pd.read_excel(r'Data.xlsx')
+        df = pd.read_excel(r'/home/densadam/AREA51/Agents.xlsx')
+        dt = pd.read_excel(r'/home/densadam/AREA51/Data.xlsx')
 
         #Gets agent name from dropdown and finds index value
         selected_name = value                                                      # df['Name'].str.capitalize() )
@@ -544,15 +544,15 @@ def update_uet(button1, button2, options, value):
 
         #Checks if agent is working today value is False
         if working_true == False:
-            
+
             message1 = "Are you sure you selected the right agent? This agent isn't set to work today!"
 
             return message1, uet_total_output, assignee, uet_day_output
-    
+
         else:
             #Adds +1 ticket worked to selected agent
             df.at[int(uet_selected_index), 'UET_Worked'] += 1
-            
+
             #Add +1 to selection count value to all agents
             df['UET_Selected'] += 1
 
@@ -561,10 +561,10 @@ def update_uet(button1, button2, options, value):
 
             #Add +1 to total worked tickets
             dt['Total_UET_Tickets'] += 1
-            
-            #Reads personal agent Excel files            
-            da_m = pd.read_excel('/home/densadam/AREA51/Agent_Data/'+selected_name+'.xlsx', sheet_name=selected_name+'_MBM_Worked') ####*******Will need to redefine directory
-            da_u = pd.read_excel('/home/densadam/AREA51/Agent_Data/'+selected_name+'.xlsx', sheet_name=selected_name+'_UET_Worked')  ####*******Will need to redefine directory
+
+            #Reads personal agent Excel files
+            da_m = pd.read_excel('/home/densadam/AREA51/'+selected_name+'.xlsx', sheet_name=selected_name+'_MBM_Worked') ####*******Will need to redefine directory
+            da_u = pd.read_excel('/home/densadam/AREA51/'+selected_name+'.xlsx', sheet_name=selected_name+'_UET_Worked')  ####*******Will need to redefine directory
 
 
             #Makes copy of agent data and adds new data
@@ -573,11 +573,11 @@ def update_uet(button1, button2, options, value):
             da_u = pd.concat([da_u1, da_u2])
 
             #writes data to excel file
-            writer = pd.ExcelWriter('/home/densadam/AREA51/Agent_Data/'+selected_name+'.xlsx', engine='xlsxwriter')  ####*******Will need to redefine directory
-            with pd.ExcelWriter('/home/densadam/AREA51/Agent_Data/'+selected_name+'.xlsx') as writer:
+            writer = pd.ExcelWriter('/home/densadam/AREA51/'+selected_name+'.xlsx', engine='xlsxwriter')  ####*******Will need to redefine directory
+            with pd.ExcelWriter('/home/densadam/AREA51/'+selected_name+'.xlsx') as writer:
                 da_m.to_excel(writer, sheet_name=selected_name+'_MBM_Worked', index=False)
                 da_u.to_excel(writer, sheet_name=selected_name+'_UET_Worked', index=False)
-        
+
 
 
             #Assigns value of total tickets worked
@@ -587,16 +587,16 @@ def update_uet(button1, button2, options, value):
             uet_day_output = df['UET_Worked'].sum()
 
             #Returns message of changes made
-            message1 = '{} was manually assigned the next UET ticket'.format(selected_name, uet_total_output)
+            message1 = '{} was manually assigned the next UET ticket'.format(selected_name)
             assignee = selected_name
-            
+
             #Writes data to Excel files
-            df.to_excel('Agents.xlsx', index = False)
-            dt.to_excel('Data.xlsx', index = False)
-        
+            df.to_excel('/home/densadam/AREA51/Agents.xlsx', index = False)
+            dt.to_excel('/home/densadam/AREA51/Data.xlsx', index = False)
+
             return message1, uet_total_output, assignee, uet_day_output
 
-        
+
     #calls on auto_uet assign button function if pressed
     elif triggered_id == 'auet-btn':
          return Auto_UET()
@@ -609,40 +609,40 @@ def update_uet(button1, button2, options, value):
 def Auto_UET():
 
     #imports files from Excel files
-    df = pd.read_excel(r'Agents.xlsx')            # Directory needs to be updated
+    df = pd.read_excel(r'/home/densadam/AREA51/Agents.xlsx')            # Directory needs to be updated
 
     #Checks if any agents are working
     if df['Working'].values.sum() == 0:
-            
+
         message1 = 'No agents selected to work today!'
-        
+
         #Finds agent with lowest selection count (last agent picked)
         min_work_index = df['UET_Selected'].idxmin()
         min_agent_name_uet = df.at[min_work_index, 'Name']
         assignee = min_agent_name_uet
-        
+
         #Assigns value of total tickets worked
         uet_total_output = dt.at[0, 'Total_UET_Tickets']
 
         #Gets sum of total tickets worked for the day
         uet_day_output = df['UET_Worked'].sum()
-        
+
         return message1, uet_total_output, assignee, uet_day_output
-        
+
     else:
 
         #Creates list of agents who are working today
         work_list = df[df['Working'] == True]
-        
+
         #Creates Data Frame of agents who are working today, then finds the agent with highest slection count value
         df2 = pd.DataFrame(work_list)
         max_work_index = df2['UET_Selected'].idxmax()
         max_agent_name_uet = df.at[max_work_index, 'Name']
-        max_agent_name_column_uet = max_agent_name_uet + '_UET_Cases_Worked'
-        
+
+
         #Reads and creates Data Frame of personal agent Excel file
-        da_m = pd.read_excel('/home/densadam/AREA51/Agent_Data/'+max_agent_name_uet+'.xlsx', sheet_name=max_agent_name_uet+'_MBM_Worked')  ####*******Will need to redefine directory
-        da_u = pd.read_excel('/home/densadam/AREA51/Agent_Data/'+max_agent_name_uet+'.xlsx', sheet_name=max_agent_name_uet+'_UET_Worked') ####*******Will need to redefine directory
+        da_m = pd.read_excel('/home/densadam/AREA51/'+max_agent_name_uet+'.xlsx', sheet_name=max_agent_name_uet+'_MBM_Worked')  ####*******Will need to redefine directory
+        da_u = pd.read_excel('/home/densadam/AREA51/'+max_agent_name_uet+'.xlsx', sheet_name=max_agent_name_uet+'_UET_Worked') ####*******Will need to redefine directory
 
 
         #Adds +1 count to all agent's selection count value
@@ -654,7 +654,7 @@ def Auto_UET():
         #Gets name of agent with highest selection count value then returns it in message
         assignee = df.at[max_work_index, 'Name']
         message1 = "{} was automatically assigned the next UET ticket".format(assignee)
-        
+
         #Resets value of highest selection count agent to 0
         df.at[max_work_index, 'UET_Selected'] = 0
 
@@ -667,8 +667,8 @@ def Auto_UET():
         da_u = pd.concat([da_u1, da_u2])
 
         #writes data to agent's personal excel file
-        writer = pd.ExcelWriter('/home/densadam/AREA51/Agent_Data/'+max_agent_name_uet+'.xlsx', engine='xlsxwriter')  ####*******Will need to redefine directory
-        with pd.ExcelWriter('/home/densadam/AREA51/Agent_Data/'+max_agent_name_uet+'.xlsx') as writer:
+        writer = pd.ExcelWriter('/home/densadam/AREA51/'+max_agent_name_uet+'.xlsx', engine='xlsxwriter')  ####*******Will need to redefine directory
+        with pd.ExcelWriter('/home/densadam/AREA51/'+max_agent_name_uet+'.xlsx') as writer:
             da_m.to_excel(writer, sheet_name=max_agent_name_uet+'_MBM_Worked', index=False)
             da_u.to_excel(writer, sheet_name=max_agent_name_uet+'_UET_Worked', index=False)
 
@@ -679,8 +679,8 @@ def Auto_UET():
         uet_day_output = df['UET_Worked'].sum()
 
         #Saves changes to Excel files
-        df.to_excel('Agents.xlsx', index = False)              # Directory needs to be updated
-        dt.to_excel('Data.xlsx', index = False)              # Directory needs to be updated
+        df.to_excel('/home/densadam/AREA51/Agents.xlsx', index = False)              # Directory needs to be updated
+        dt.to_excel('/home/densadam/AREA51/Data.xlsx', index = False)              # Directory needs to be updated
 
         return message1, uet_total_output, assignee, uet_day_output
 

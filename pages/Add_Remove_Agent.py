@@ -6,14 +6,15 @@ import dash_bootstrap_components as dbc
 import time
 from datetime import datetime
 
+import xlsxwriter
 import openpyxl
 import threading
 import  pandas as pd
 import numpy as np
 
 # Import data from excel files
-dt = pd.read_excel(r'Data.xlsx')                             ######### Needs URL updated
-df = pd.read_excel(r'Agents.xlsx')
+dt = pd.read_excel(r'/home/densadam/AREA51/Data.xlsx')                             ######### Needs URL updated
+df = pd.read_excel(r'/home/densadam/AREA51/Agents.xlsx')
 
 # Assign list of names
 df['Name'] = df['Name'].str.upper()

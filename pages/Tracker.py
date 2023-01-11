@@ -9,8 +9,8 @@ import  pandas as pd
 import numpy as np
 
 
-df = pd.read_excel(r'Agents.xlsx')
-dt = pd.read_excel(r'Data.xlsx')
+df = pd.read_excel(r'/home/densadam/AREA51/Agents.xlsx')
+dt = pd.read_excel(r'/home/densadam/AREA51/Data.xlsx')
 
 df['Name'] = df['Name'].str.upper()
 name_list = df['Name']
